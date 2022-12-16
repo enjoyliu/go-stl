@@ -1,5 +1,11 @@
 package ordered_map
 
+import (
+	. "golang.org/x/exp/constraints"
+	"ordered_map/rbtree"
+	"sort"
+)
+
 // OrderedMap is a map that maintains the order of insertion.
 type OrderedMap interface {
 
@@ -29,4 +35,22 @@ type OrderedMap interface {
 
 	// Keys returns the keys in the map.
 	Keys() []interface{}
+}
+
+// how to ensure map's key is sortable
+type I interface {
+	// Insert1 key is sortable, but only base type
+	Insert1(key Ordered, value any) bool
+
+	// Insert2 key is sortable, but not support base type
+	Insert2(key sort.Interface, value any) bool
+}
+
+type orderedMap[K Ordered] struct {
+	// The map of keys to values.
+	store rbtree.RbTreeI[K]
+}
+
+func (m *orderedMap[K]) Insert(key, value interface{}) bool {
+	return m.store.Insert(key, value)
 }
