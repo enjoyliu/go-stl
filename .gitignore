@@ -1,0 +1,33 @@
+# Program output directory
+bin/
+
+# Go Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# proto output
+proto/*.go
+stub/*
+
+# build output
+pack/*
+
+.cache/
+__pycache__/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# JetBrains IDE
+.idea/
+
+# VsCode IDE
+.vscode/
+
+#log file
+*.log
