@@ -1,13 +1,15 @@
 package ordered_map
 
 import (
-	. "golang.org/x/exp/constraints"
-	"ordered_map/rbtree"
 	"sort"
+
+	. "golang.org/x/exp/constraints"
+
+	"ordered_map/rbtree"
 )
 
-// OrderedMap is a map that maintains the order of insertion.
-type OrderedMap interface {
+// OrderedMapI is a map that maintains the order of insertion.
+type OrderedMapI interface {
 
 	// Insert adds an element to the map. If the element already exists, it is not added again.
 	Insert(key, value interface{}) bool
@@ -22,7 +24,7 @@ type OrderedMap interface {
 	Contains(key interface{}) bool
 
 	// Merge merges the elements from another map into this map. If the element already exists, it is replaced.
-	Merge(other OrderedMap)
+	Merge(other OrderedMapI)
 
 	// Len returns the number of elements in the map.
 	Len() int
@@ -38,19 +40,64 @@ type OrderedMap interface {
 }
 
 // how to ensure map's key is sortable
-type I interface {
+type I[K Ordered, V any] interface {
 	// Insert1 key is sortable, but only base type
-	Insert1(key Ordered, value any) bool
+	Insert1(key K, value V) bool
 
 	// Insert2 key is sortable, but not support base type
-	Insert2(key sort.Interface, value any) bool
+	Insert2(key sort.Interface, value V) bool
 }
 
-type orderedMap[K Ordered] struct {
+type OrderedMap[K Ordered, V any] struct {
 	// The map of keys to values.
-	store rbtree.RbTreeI[K]
+	store rbtree.RbTreeI[K, V]
 }
 
-func (m *orderedMap[K]) Insert(key, value interface{}) bool {
+func (m *OrderedMap[K, V]) InsertOrReplace(key K, value V) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m *OrderedMap[K, V]) Remove(key K) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m *OrderedMap[K, V]) Contains(key K) bool {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m *OrderedMap[K, V]) Merge(other OrderedMap[K, V]) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m *OrderedMap[K, V]) Len() int {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m *OrderedMap[K, V]) Empty() bool {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m *OrderedMap[K, V]) Get(key K) (interface{}, bool) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m *OrderedMap[K, V]) Keys() []K {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m *OrderedMap[K, V]) Insert(key K, value V) bool {
 	return m.store.Insert(key, value)
+}
+
+func NewOrderedMap[K Ordered, V any]() *OrderedMap[K, V] {
+
+	return &OrderedMap[K, V]{store: rbtree.NewTree[K, V]()}
 }

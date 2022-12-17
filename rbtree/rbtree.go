@@ -4,29 +4,29 @@ import (
 	. "golang.org/x/exp/constraints"
 )
 
-func NewTree[K Ordered]() RbTreeI[K] {
-	return RbTree[K]{}
+func NewTree[K Ordered, V any]() RbTreeI[K, V] {
+	return RbTree[K, V]{}
 }
 
 // a red-black tree.
-type RbTreeI[K Ordered] interface {
+type RbTreeI[K Ordered, V any] interface {
 	// Find finds the node and return its value.
-	Find(key K) any
+	Find(key K) V
 
 	// FindIt finds the node and return it as an iterator.
-	FindIt(key K) RbNode
+	FindIt(key K) RbNode[K, V]
 
 	// Empty checks whether the rbtree is empty.
 	Empty() bool
 
 	// Iterator creates the rbtree's iterator that points to the minmum node.
-	Iterator() RbNode
+	Iterator() RbNode[K, V]
 
 	// Size returns the size of the rbtree.
 	Size() int
 
 	// Insert inserts a new node into the rbtree.
-	Insert(key K, value any) bool
+	Insert(key K, value V) bool
 
 	// Erase erases a node from the rbtree.
 	Erase(key K) bool
@@ -35,72 +35,72 @@ type RbTreeI[K Ordered] interface {
 	Clear()
 
 	// Clone clones the rbtree.
-	Clone() RbTreeI[K]
+	Clone() RbTreeI[K, V]
 
 	// Contains checks whether the rbtree contains the key.
 	Contains(key K) bool
 }
 
-type RbTree[K Ordered] struct{}
+type RbTree[K Ordered, V any] struct{}
 
-func (RbTree[K]) Find(key K) any {
+func (RbTree[K, V]) Find(key K) V {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (RbTree[K]) FindIt(key K) RbNode {
+func (RbTree[K, V]) FindIt(key K) RbNode[K, V] {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (RbTree[K]) Empty() bool {
+func (RbTree[K, V]) Empty() bool {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (RbTree[K]) Iterator() RbNode {
+func (RbTree[K, V]) Iterator() RbNode[K, V] {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (RbTree[K]) Size() int {
+func (RbTree[K, V]) Size() int {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (RbTree[K]) Insert(key K, value any) bool {
+func (RbTree[K, V]) Insert(key K, value V) bool {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (RbTree[K]) Erase(key K) bool {
+func (RbTree[K, V]) Erase(key K) bool {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (RbTree[K]) Clear() {
+func (RbTree[K, V]) Clear() {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (RbTree[K]) Clone() RbTreeI[K] {
+func (RbTree[K, V]) Clone() RbTreeI[K, V] {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (RbTree[K]) Contains(key K) bool {
+func (RbTree[K, V]) Contains(key K) bool {
 	//TODO implement me
 	panic("implement me")
 }
 
 // a red-black tree node.
-type RbNode interface {
+type RbNode[K Ordered, V any] interface {
 	// Key returns the key of the node.
-	Key() Ordered
+	Key() K
 
 	// Value returns the value of the node.
-	Value() any
+	Value() V
 
 	// Next returns the next node.
-	Next() RbNode
+	Next() RbNode[K, V]
 }
