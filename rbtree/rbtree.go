@@ -4,10 +4,6 @@ import (
 	. "golang.org/x/exp/constraints"
 )
 
-func NewTree[K Ordered, V any]() RbTreeI[K, V] {
-	return RbTree[K, V]{}
-}
-
 // a red-black tree.
 type RbTreeI[K Ordered, V any] interface {
 	// Find finds the node and return its value.
@@ -29,7 +25,7 @@ type RbTreeI[K Ordered, V any] interface {
 	Insert(key K, value V) bool
 
 	// Erase erases a node from the rbtree.
-	Erase(key K) bool
+	Erase(key K)
 
 	// Clear clears the rbtree.
 	Clear()
@@ -95,11 +91,11 @@ func (RbTree[K, V]) Contains(key K) bool {
 
 // a red-black tree node.
 type RbNode[K Ordered, V any] interface {
-	// Key returns the key of the node.
-	Key() K
+	// GetKey returns the key of the node.
+	GetKey() K
 
-	// Value returns the value of the node.
-	Value() V
+	// GetValue returns the value of the node.
+	GetValue() V
 
 	// Next returns the next node.
 	Next() RbNode[K, V]
