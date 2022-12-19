@@ -7,7 +7,7 @@ import (
 // a red-black tree.
 type RbTreeI[K Ordered, V any] interface {
 	// Find finds the node and return its value.
-	Find(key K) V
+	Find(key K) (V, bool)
 
 	// FindIt finds the node and return it as an iterator.
 	FindIt(key K) RbNode[K, V]

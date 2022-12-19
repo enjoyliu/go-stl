@@ -29,13 +29,13 @@ func NewTree[K Ordered, V any]() *Tree[K, V] {
 }
 
 // Find finds the node and return its value.
-func (t *Tree[K, V]) Find(key K) V {
+func (t *Tree[K, V]) Find(key K) (V, bool) {
 	n := t.findnode(key)
 	if n != nil {
-		return n.Value
+		return n.Value, true
 	}
 	var result V
-	return result
+	return result, false
 }
 
 // Contains checks whether the rbtree contains the key.
@@ -85,8 +85,10 @@ func (t *Tree[K, V]) Insert(key K, value V) bool {
 		y = x
 		if key < x.Key {
 			x = x.left
-		} else {
+		} else if key > x.Key {
 			x = x.right
+		} else {
+			return false
 		}
 	}
 
@@ -94,6 +96,7 @@ func (t *Tree[K, V]) Insert(key K, value V) bool {
 	t.size++
 
 	if y == nil {
+		// if z has no parent, it is the root
 		z.color = BLACK
 		t.root = z
 		return true
@@ -161,6 +164,7 @@ func (t *Tree[K, V]) Clone() RbTreeI[K, V] {
 	return nil
 }
 
+// rbInsertFixup fixes the rbtree after inserting a node.
 func (t *Tree[K, V]) rbInsertFixup(z *node[K, V]) {
 	var y *node[K, V]
 	for z.parent != nil && z.parent.color == RED {
@@ -201,6 +205,7 @@ func (t *Tree[K, V]) rbInsertFixup(z *node[K, V]) {
 	t.root.color = BLACK
 }
 
+// rbDeleteFixup fixes the rbtree after deleting a node.
 func (t *Tree[K, V]) rbDeleteFixup(x, parent *node[K, V]) {
 	var w *node[K, V]
 

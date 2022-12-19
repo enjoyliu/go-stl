@@ -1,11 +1,10 @@
 package ordered_map
 
 import (
+	rbtree2 "ordered_map/ordered_map/rbtree"
 	"sort"
 
 	. "golang.org/x/exp/constraints"
-
-	"ordered_map/rbtree"
 )
 
 // OrderedMapI is a map that maintains the order of insertion.
@@ -50,7 +49,7 @@ type I[K Ordered, V any] interface {
 
 type OrderedMap[K Ordered, V any] struct {
 	// The map of keys to values.
-	store rbtree.RbTreeI[K, V]
+	store rbtree2.RbTreeI[K, V]
 }
 
 func (m *OrderedMap[K, V]) InsertOrReplace(key K, value V) {
@@ -99,5 +98,5 @@ func (m *OrderedMap[K, V]) Insert(key K, value V) bool {
 
 func NewOrderedMap[K Ordered, V any]() *OrderedMap[K, V] {
 
-	return &OrderedMap[K, V]{store: rbtree.NewTree[K, V]()}
+	return &OrderedMap[K, V]{store: rbtree2.NewTree[K, V]()}
 }
