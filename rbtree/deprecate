@@ -1,0 +1,39 @@
+package rbtree
+
+import (
+	"go-stl/container"
+	. "golang.org/x/exp/constraints"
+)
+
+// a red-black tree.
+type RbTreeI[K Ordered, V any] interface {
+	// Find finds the node and return its value.
+	Find(key K) (V, bool)
+
+	// FindIt finds the node and return it as an iterator.
+	FindIt(key K) container.MapIterator[K, V]
+
+	// Empty checks whether the rbtree is empty.
+	Empty() bool
+
+	// Iterator creates the rbtree's iterator that points to the minmum node.
+	Iterator() container.MapIterator[K, V]
+
+	// Size returns the size of the rbtree.
+	Size() int
+
+	// Insert inserts a new node into the rbtree.
+	Insert(key K, value V) bool
+
+	// Erase erases a node from the rbtree.
+	Erase(key K)
+
+	// Clear clears the rbtree.
+	Clear()
+
+	// Clone clones the rbtree.
+	Clone() RbTreeI[K, V]
+
+	// Contains checks whether the rbtree contains the key.
+	Contains(key K) bool
+}

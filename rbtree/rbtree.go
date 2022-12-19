@@ -2,101 +2,159 @@ package rbtree
 
 import (
 	. "golang.org/x/exp/constraints"
+
+	"go-stl/container"
 )
 
-// a red-black tree.
-type RbTreeI[K Ordered, V any] interface {
-	// Find finds the node and return its value.
-	Find(key K) (V, bool)
+// color of node
+const (
+	RED   = 0
+	BLACK = 1
+)
 
-	// FindIt finds the node and return it as an iterator.
-	FindIt(key K) RbNode[K, V]
-
-	// Empty checks whether the rbtree is empty.
-	Empty() bool
-
-	// Iterator creates the rbtree's iterator that points to the minmum node.
-	Iterator() RbNode[K, V]
-
-	// Size returns the size of the rbtree.
-	Size() int
-
-	// Insert inserts a new node into the rbtree.
-	Insert(key K, value V) bool
-
-	// Erase erases a node from the rbtree.
-	Erase(key K)
-
-	// Clear clears the rbtree.
-	Clear()
-
-	// Clone clones the rbtree.
-	Clone() RbTreeI[K, V]
-
-	// Contains checks whether the rbtree contains the key.
-	Contains(key K) bool
+// Tree is a struct of red-black tree.
+type Tree[K Ordered, V any] struct {
+	root *node[K, V]
+	size int
 }
 
-type RbTree[K Ordered, V any] struct{}
-
-func (RbTree[K, V]) Find(key K) V {
-	//TODO implement me
-	panic("implement me")
+// NewTree creates a new rbtree.
+func NewTree[K Ordered, V any]() *Tree[K, V] {
+	return &Tree[K, V]{}
 }
 
-func (RbTree[K, V]) FindIt(key K) RbNode[K, V] {
-	//TODO implement me
-	panic("implement me")
+// Find finds the node and return its value.
+func (t *Tree[K, V]) Find(key K) (V, bool) {
+	n := t.findnode(key)
+	if n != nil {
+		return n.value, true
+	}
+	var result V
+	return result, false
 }
 
-func (RbTree[K, V]) Empty() bool {
-	//TODO implement me
-	panic("implement me")
+// Contains checks whether the rbtree contains the key.
+func (t *Tree[K, V]) Contains(key K) bool {
+	if t.findnode(key) == nil {
+		return false
+	}
+	return true
 }
 
-func (RbTree[K, V]) Iterator() RbNode[K, V] {
-	//TODO implement me
-	panic("implement me")
+// FindIt finds the node and return it as an iterator.
+func (t *Tree[K, V]) FindIt(key K) container.MapIterator[K, V] {
+	return t.findnode(key)
 }
 
-func (RbTree[K, V]) Size() int {
-	//TODO implement me
-	panic("implement me")
+// Empty checks whether the rbtree is empty.
+func (t *Tree[K, V]) Empty() bool {
+	if t.root == nil {
+		return true
+	}
+	return false
 }
 
-func (RbTree[K, V]) Insert(key K, value V) bool {
-	//TODO implement me
-	panic("implement me")
+// Iterator creates the rbtree's iterator that points to the minmum node.
+func (t *Tree[K, V]) Iterator() container.MapIterator[K, V] {
+	return minimum(t.root)
 }
 
-func (RbTree[K, V]) Erase(key K) bool {
-	//TODO implement me
-	panic("implement me")
+// Size returns the size of the rbtree.
+func (t *Tree[K, V]) Size() int {
+	return t.size
 }
 
-func (RbTree[K, V]) Clear() {
-	//TODO implement me
-	panic("implement me")
+// Clear destroys the rbtree.
+func (t *Tree[K, V]) Clear() {
+	t.root = nil
+	t.size = 0
 }
 
-func (RbTree[K, V]) Clone() RbTreeI[K, V] {
-	//TODO implement me
-	panic("implement me")
+// Insert inserts the key-value pair into the rbtree.
+func (t *Tree[K, V]) Insert(key K, value V) bool {
+	// TODO need return if the key has already existed
+	x := t.root
+	var y *node[K, V]
+
+	for x != nil {
+		y = x
+		if key < x.key {
+			x = x.left
+		} else if key > x.key {
+			x = x.right
+		} else {
+			return false
+		}
+	}
+
+	z := &node[K, V]{parent: y, color: RED, key: key, value: value}
+	t.size++
+
+	if y == nil {
+		// if z has no parent, it is the root
+		z.color = BLACK
+		t.root = z
+		return true
+	} else if z.key < y.key {
+		y.left = z
+	} else {
+		y.right = z
+	}
+	t.rbInsertFixup(z)
+	return true
 }
 
-func (RbTree[K, V]) Contains(key K) bool {
-	//TODO implement me
-	panic("implement me")
+// Erase deletes the node by key
+func (t *Tree[K, V]) Erase(key K) {
+	z := t.findnode(key)
+	if z == nil {
+		return
+	}
+
+	var x, y *node[K, V]
+	if z.left != nil && z.right != nil {
+		y = successor(z)
+	} else {
+		y = z
+	}
+
+	if y.left != nil {
+		x = y.left
+	} else {
+		x = y.right
+	}
+
+	xparent := y.parent
+	if x != nil {
+		x.parent = xparent
+	}
+	if y.parent == nil {
+		t.root = x
+	} else if y == y.parent.left {
+		y.parent.left = x
+	} else {
+		y.parent.right = x
+	}
+
+	if y != z {
+		z.key = y.key
+		z.value = y.value
+	}
+
+	if y.color == BLACK {
+		t.rbDeleteFixup(x, xparent)
+	}
+	t.size--
 }
 
-// a red-black tree node.
-type RbNode[K Ordered, V any] interface {
-	// GetKey returns the key of the node.
-	GetKey() K
+// Clone creates a new rbtree that is a clone of the original rbtree.
+func (t *Tree[K, V]) Clone() *Tree[K, V] {
+	// TODO: need to implement
 
-	// GetValue returns the value of the node.
-	GetValue() V
+	// iterate the tree
+	var newTree *Tree[K, V]
+	newTree = NewTree[K, V]()
+	*newTree.root = *t.root
 
-	// Next returns the next node.
-	Next() RbNode[K, V]
+	return nil
 }
