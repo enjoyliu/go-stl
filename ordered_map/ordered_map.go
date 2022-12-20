@@ -7,9 +7,13 @@ import (
 	"go-stl/rbtree"
 )
 
-type OrderedMap[K Ordered, V any] struct {
+type LessFunc[K any] func(K, K) bool
+
+type OrderedMap[K any, V any] struct {
 	// The map of keys to values.
 	store *rbtree.Tree[K, V]
+
+	less LessFunc[K]
 }
 
 func (m *OrderedMap[K, V]) Insert(key K, value V) bool {
@@ -59,6 +63,22 @@ func (m *OrderedMap[K, V]) Clear() {
 }
 
 func NewOrderedMap[K Ordered, V any]() container.OrderedMap[K, V] {
+	cmp := DefaultCmp[K]()
+	return &OrderedMap[K, V]{
+		store: rbtree.NewTree[K, V](cmp),
+		less:  cmp,
+	}
+}
 
-	return &OrderedMap[K, V]{store: rbtree.NewTree[K, V]()}
+func DefaultCmp[K Ordered]() LessFunc[K] {
+	return func(a, b K) bool {
+		return a < b
+	}
+}
+
+func WithCompareFunc[K any, V any](cmp func(K, K) bool) container.OrderedMap[K, V] {
+	return &OrderedMap[K, V]{
+		store: rbtree.NewTree[K, V](cmp),
+		less:  cmp,
+	}
 }

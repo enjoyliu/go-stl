@@ -1,19 +1,5 @@
 package container
 
-import (
-	"sort"
-
-	"golang.org/x/exp/constraints"
-)
-
-type Sortable interface {
-	sort.Interface
-}
-
-type Ordered interface {
-	Sortable | constraints.Ordered
-}
-
 type Container interface {
 	// Len returns the number of elements in the container.
 	Len() int
@@ -97,7 +83,7 @@ type Map[K any, V any] interface {
 }
 
 // OrderedMap is a map that maintains the order of insertion.
-type OrderedMap[K Ordered, V any] interface {
+type OrderedMap[K any, V any] interface {
 	Map[K, V]
 
 	// Find returns the value associated with the key.

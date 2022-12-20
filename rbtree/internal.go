@@ -1,9 +1,5 @@
 package rbtree
 
-import (
-	. "golang.org/x/exp/constraints"
-)
-
 // rbInsertFixup fixes the rbtree after inserting a node.
 func (t *Tree[K, V]) rbInsertFixup(z *node[K, V]) {
 	var y *node[K, V]
@@ -156,23 +152,19 @@ func (t *Tree[K, V]) rightRotate(x *node[K, V]) {
 func (t *Tree[K, V]) findnode(key K) *node[K, V] {
 	x := t.root
 	for x != nil {
-		if key < x.key {
+		if t.lessFunc(key, x.key) {
 			x = x.left
-		} else {
-			if key == x.key {
-				return x
-			}
+		} else if t.lessFunc(x.key, key) {
 			x = x.right
+		} else {
+			return x
 		}
 	}
 	return nil
 }
 
-type TreeIterator[K Ordered, V any] struct {
-}
-
 // successor returns the successor of the node
-func successor[K Ordered, V any](x *node[K, V]) *node[K, V] {
+func successor[K any, V any](x *node[K, V]) *node[K, V] {
 	if x.right != nil {
 		return minimum(x.right)
 	}
@@ -185,7 +177,7 @@ func successor[K Ordered, V any](x *node[K, V]) *node[K, V] {
 }
 
 // getColor gets color of the node.
-func getColor[K Ordered, V any](n *node[K, V]) int {
+func getColor[K any, V any](n *node[K, V]) int {
 	if n == nil {
 		return BLACK
 	}
@@ -193,7 +185,7 @@ func getColor[K Ordered, V any](n *node[K, V]) int {
 }
 
 // minimum finds the minimum node of subtree n.
-func minimum[K Ordered, V any](n *node[K, V]) *node[K, V] {
+func minimum[K any, V any](n *node[K, V]) *node[K, V] {
 	for n.left != nil {
 		n = n.left
 	}

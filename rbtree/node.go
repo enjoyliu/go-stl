@@ -1,12 +1,10 @@
 package rbtree
 
 import (
-	. "golang.org/x/exp/constraints"
-
 	"go-stl/container"
 )
 
-type node[K Ordered, V any] struct {
+type node[K any, V any] struct {
 	left, right, parent *node[K, V]
 	color               int
 	key                 K

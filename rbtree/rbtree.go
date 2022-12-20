@@ -1,8 +1,6 @@
 package rbtree
 
 import (
-	. "golang.org/x/exp/constraints"
-
 	"go-stl/container"
 )
 
@@ -13,14 +11,17 @@ const (
 )
 
 // Tree is a struct of red-black tree.
-type Tree[K Ordered, V any] struct {
-	root *node[K, V]
-	size int
+type Tree[K any, V any] struct {
+	root     *node[K, V]
+	size     int
+	lessFunc func(K, K) bool
 }
 
 // NewTree creates a new rbtree.
-func NewTree[K Ordered, V any]() *Tree[K, V] {
-	return &Tree[K, V]{}
+func NewTree[K any, V any](cmp func(K, K) bool) *Tree[K, V] {
+	return &Tree[K, V]{
+		lessFunc: cmp,
+	}
 }
 
 // Find finds the node and return its value.
@@ -78,9 +79,9 @@ func (t *Tree[K, V]) Insert(key K, value V) bool {
 
 	for x != nil {
 		y = x
-		if key < x.key {
+		if t.lessFunc(key, x.key) {
 			x = x.left
-		} else if key > x.key {
+		} else if t.lessFunc(x.key, key) {
 			x = x.right
 		} else {
 			return false
@@ -95,7 +96,7 @@ func (t *Tree[K, V]) Insert(key K, value V) bool {
 		z.color = BLACK
 		t.root = z
 		return true
-	} else if z.key < y.key {
+	} else if t.lessFunc(z.key, y.key) {
 		y.left = z
 	} else {
 		y.right = z
@@ -153,7 +154,7 @@ func (t *Tree[K, V]) Clone() *Tree[K, V] {
 
 	// iterate the tree
 	var newTree *Tree[K, V]
-	newTree = NewTree[K, V]()
+	newTree = NewTree[K, V](t.lessFunc)
 	*newTree.root = *t.root
 
 	return nil
